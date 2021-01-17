@@ -22,8 +22,11 @@ namespace hamcheck
 
             toolStripStatusLabel1.Text = "Updating...";
             dataGridView1.AutoGenerateColumns = true;
-            dataGridView1.DataSource = HamCheckLib.HamCheckLib.ds.Tables[0];
-            dataGridView1.Update();
+            if (HamCheckLib.HamCheckLib.ds != null && HamCheckLib.HamCheckLib.ds.Tables.Count > 0)
+            {
+                dataGridView1.DataSource = HamCheckLib.HamCheckLib.ds.Tables[0];
+                dataGridView1.Update();
+            }
             //HamCheckLib.HamCheckLib.Close();
 
             toolStripStatusLabel1.Text = "";
