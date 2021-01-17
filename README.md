@@ -17,7 +17,7 @@ Note: whitespace and single characters can be included in the list that is copy 
 
 City lines are optional, but can help you scope to a particular area. When separated by a comma, two letter state abbreviations can also be used. This can be helpful in cases where many states have the same city name.
 
-The acceptable formats for city lines are:
+The currently accepted formats for city lines are:
 ```
 City
 City, ST
