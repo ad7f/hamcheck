@@ -611,14 +611,12 @@ On first run, please allow time for a copy of the database to be downloaded loca
 The acceptable formats for name lines are:
 LastName
 LastName, First
-LastName, Person1FirstName &amp; Person2FirstName
-LastName, P1First P1Middle &amp; P2First P2Middle
+LastName, Person1FirstName &amp;&amp; Person2FirstName
+LastName, P1First P1Middle &amp;&amp; P2First P2Middle
 (whitespace and single characters are ignored)
 
 The acceptable formats for city lines are:
 City
-City, ST
-
-github.com/ad7f/hamcheck</value>
+City, ST</value>
   </data>
 </root>

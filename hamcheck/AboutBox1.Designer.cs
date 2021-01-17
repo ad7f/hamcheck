@@ -105,7 +105,7 @@ namespace hamcheck
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(208, 78);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(408, 360);
+            this.label1.Size = new System.Drawing.Size(408, 320);
             this.label1.TabIndex = 1;
             this.label1.Text = resources.GetString("label1.Text");
             this.label1.Click += new System.EventHandler(this.label1_Click);
@@ -122,7 +122,7 @@ namespace hamcheck
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AboutBox1";
-            this.Padding = new System.Windows.Forms.Padding(14, 14, 14, 14);
+            this.Padding = new System.Windows.Forms.Padding(14);
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
