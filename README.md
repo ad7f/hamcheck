@@ -4,7 +4,7 @@ This tool takes a list of names and checks to see which ones are amateur radio o
 
 On first run, please allow time for a copy of the database to be downloaded locally. 
 
-The tool is designed so that you can copy and paste a list of names into the tool.
+The tool was designed to make it possible to copy and paste a large list of names into the tool.
 
 The currently accepted formats for name lines are:
 ```
@@ -22,3 +22,6 @@ The currently accepted formats for city lines are:
 City
 City, ST
 ```
+
+This C# Windows Forms Application can be built with Visual Studio 2019: 
+https://visualstudio.microsoft.com/downloads/
