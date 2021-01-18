@@ -22,3 +22,6 @@ The currently accepted formats for city lines are:
 City
 City, ST
 ```
+
+![screenshot](screenshot.png)
+
