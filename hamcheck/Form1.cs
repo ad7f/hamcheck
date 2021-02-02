@@ -1,5 +1,4 @@
-﻿using HamCheckLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -12,35 +11,29 @@ namespace hamcheck
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonSearch_Click(object sender, EventArgs e)
         {
             toolStripStatusLabel1.Text = "Initializing...";
-            HamCheckLib.HamCheckLib.Init();
+            Checker.Init();
 
             toolStripStatusLabel1.Text = "Querying...";
-            HamCheckLib.HamCheckLib.GetResults(textBox1.Text, textBox3.Text);
+            Checker.GetResults(textBoxNames.Text, textBoxCities.Text);
 
             toolStripStatusLabel1.Text = "Updating...";
-            dataGridView1.AutoGenerateColumns = true;
-            if (HamCheckLib.HamCheckLib.ds != null && HamCheckLib.HamCheckLib.ds.Tables.Count > 0)
+            dataGridViewResults.AutoGenerateColumns = true;
+            if (Checker.ds != null && Checker.ds.Tables.Count > 0)
             {
-                dataGridView1.DataSource = HamCheckLib.HamCheckLib.ds.Tables[0];
-                dataGridView1.Update();
+                dataGridViewResults.DataSource = Checker.ds.Tables[0];
+                dataGridViewResults.Update();
             }
-            //HamCheckLib.HamCheckLib.Close();
-
             toolStripStatusLabel1.Text = "";
         }
 
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        private void toolStripMenuItemAbout_Click(object sender, EventArgs e)
         {
             AboutBox1 aboutBox = new AboutBox1();
             aboutBox.ShowDialog();
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

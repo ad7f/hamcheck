@@ -8,9 +8,9 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Collections.Generic;
 
-namespace HamCheckLib
+namespace hamcheck
 {
-    public static class HamCheckLib
+    public static class Checker
     {
         public static string zipFileUrl = "ftp://wirelessftp.fcc.gov/pub/uls/complete/l_amat.zip";
         public static string tempDirPath = Path.Combine(Path.GetTempPath(), "hamcheck");
@@ -22,7 +22,8 @@ namespace HamCheckLib
         public static DataSet ds = null;
         public static SQLiteDataAdapter sqlAdapter = null;
 
-        // from: https://www.fcc.gov/sites/default/files/public_access_database_definitions_sql_v3_2.txt
+        // Public Access Database Definitions, modified for SQLite 
+        // https://www.fcc.gov/sites/default/files/public_access_database_definitions_sql_v3_2.txt
         public static string sqlCreateTable = @"
             create table if not exists PUBACC_EN
             (
@@ -77,16 +78,16 @@ namespace HamCheckLib
             GC.WaitForPendingFinalizers();
         }
 
-        public static void PrepTempTablePeople(List<Person> people)
+        public static void PrepTempPeopleTable(List<Person> people)
         {
-            // drop temp table if it exists
+            // drop temp people table if it already exists
             string sql = "DROP TABLE IF EXISTS TMP_PEOPLE";
             using (SQLiteCommand cmd = new SQLiteCommand(sql, dbConn))
             {
                 cmd.ExecuteScalar();
             }
 
-            // create temp table 
+            // create temp people table
             sql = @"create table if not exists TMP_PEOPLE
                 (first_name varchar(20)          null collate nocase,
                   last_name varchar(20)          null collate nocase)";
@@ -95,9 +96,9 @@ namespace HamCheckLib
                 cmd.ExecuteScalar();
             }
 
+            // insert all people to search for into the temp people table
             using (var transaction = dbConn.BeginTransaction())
             {
-                // insert all people into temp table 
                 var command = dbConn.CreateCommand();
                 command.CommandText = @" INSERT INTO TMP_PEOPLE VALUES ($first_name, $last_name)";
                 
@@ -120,16 +121,16 @@ namespace HamCheckLib
             }
         }
 
-        public static void PrepTempTableCities(List<City> cities)
+        public static void PrepTempCitiesTable(List<City> cities)
         {
-            // drop temp table if it exists
+            // drop temp cities table if it already exists
             string sql = "DROP TABLE IF EXISTS TMP_CITIES";
             using (SQLiteCommand cmd = new SQLiteCommand(sql, dbConn))
             {
                 cmd.ExecuteScalar();
             }
 
-            // create temp table 
+            // create temp cities table 
             sql = @"create table if not exists TMP_CITIES
                 (city varchar(20)          null collate nocase,
                   state                     char(2)              null collate nocase)";
@@ -138,9 +139,9 @@ namespace HamCheckLib
                 cmd.ExecuteScalar();
             }
 
+            // insert all cities to scope the search with into the temp cities tables
             using (var transaction = dbConn.BeginTransaction())
             {
-                // insert all cities into temp table 
                 var command = dbConn.CreateCommand();
                 command.CommandText = @" INSERT INTO TMP_CITIES VALUES ($city, $state)";
 
@@ -164,18 +165,22 @@ namespace HamCheckLib
 
         public static void GetResults(string people, string cities)
         {
-            // Including more than 1000 names + cities in a single query exceeds SQLite expression tree limits
-            // Prepare temporary tables instead, allowing the actual query used for comparison to be smaller...
+            // This method accepts a list of people and cities if any to search for.
+            // To avoid exceeding the SQLite expression tree limits for queries, 
+            // rather than using a single monolothic large SQL query, some temporary
+            // tables are populated with the people and cities to search for.  The 
+            // final query then compares these temp tables with the public access data. 
+            
             List<Person> personList = GetNames(people);
-            PrepTempTablePeople(personList);
-            if (personList.Count < 1) return;
+            if (personList.Count < 1) return; // return early, nothing to do
+            PrepTempPeopleTable(personList);            
 
             List<City> cityList = GetCities(cities);
-            PrepTempTableCities(cityList);
+            PrepTempCitiesTable(cityList);
 
             string sqlStatement;
-            sqlStatement = "select a.call_sign,a.last_name,a.first_name,a.street_address,a.city,a.state from PUBACC_EN as A, TMP_PEOPLE as P WHERE A.last_name = P.last_name AND A.first_name LIKE (P.first_name || '%')";
-            if (cityList.Count>0) sqlStatement += " AND A.city in (SELECT city from TMP_CITIES)";
+            sqlStatement = "SELECT A.call_sign,A.last_name,A.first_name,A.street_address,A.city,A.state from PUBACC_EN as A, TMP_PEOPLE as P WHERE A.last_name = P.last_name AND A.first_name LIKE (P.first_name || '%')";
+            if (cityList.Count>0) sqlStatement += " AND A.city IN (SELECT city FROM TMP_CITIES)";
             
             sqlAdapter = new SQLiteDataAdapter(sqlStatement, dbConn);
             ds = new DataSet();
@@ -414,15 +419,6 @@ namespace HamCheckLib
             }
         }
 
-        public static string GetVersion()
-        {
-            string sql = "SELECT SQLITE_VERSION()";
-            using (SQLiteCommand cmd = new SQLiteCommand(sql, dbConn))
-            {
-               return cmd.ExecuteScalar().ToString();
-            }
-        }
-
         public static List<City> GetCities(string stringToParse)
         {
             List<City> list = new List<City>();
@@ -454,8 +450,11 @@ namespace HamCheckLib
         {
             List<Person> list = new List<Person>();
 
-            // read raw data and construct a list of names
-            // data is expected to be in the format: 
+            // Read raw data and construct a list of names
+            // The data for each line can be provided in the format: 
+            // Lastname
+            // Lastname, FirstName1
+            // Lastname, FirstName1 MiddleName1
             // Lastname, FirstName1 MiddleName1 & FirstName2 MiddleName2
 
             using (StringReader sr = new StringReader(stringToParse))
@@ -470,7 +469,7 @@ namespace HamCheckLib
                         string[] last = line.Split(',');
 
                         string lastName = last[0].Trim();                    
-                        if (last.Length > 1)
+                        if (last.Length > 1) // skip single character subheadings
                         {
                             // get first name(s) if any
                             // split on ampersand - if it exists, there were two family members with same last name, so add them both

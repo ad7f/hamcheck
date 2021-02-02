@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HamCheckLib
+namespace hamcheck
 {
     public class Person
     {
@@ -25,26 +25,6 @@ namespace HamCheckLib
             {
                 firstName = first;
             }            
-        }
-
-        public string GetSqlWhere()
-        {
-            string sql = "";
-
-            if (lastName != null)
-            {
-                sql = " (last_name = '" + lastName.Replace("'","''") + "' ";
-                if (firstName != null)
-                {
-                    sql = sql + " AND first_name='" + firstName.Replace("'", "''") + "' )";
-                }
-                else
-                {
-                    sql = sql + ") ";
-                }
-            }
-
-            return sql; 
         }
     }
 }
