@@ -36,6 +36,7 @@ City, ST
 
 ## Tips for building from source
 
-- When building this project from source using the zip file method, it will be required to remove the "Mark of the Web" from all downloaded files prior to building in Visual 2019.  For more information on how to do this, see  [How To Tips - Remove the Mark of the Web Visual Studio 2019 - ericnagel.com](https://www.ericnagel.com/how-to-tips/remove-the-mark-of-the-web-visual-studio-2019.html) 
-- Make sure the [Visual Studio NuGet Package manager](https://docs.microsoft.com/en-us/nuget/consume-packages/install-use-packages-visual-studio) has the [System.Data.SQLite.Core](https://www.nuget.org/packages/System.Data.SQLite.Core/) installed
+When building this project from source using the zip file method, it will be required to remove the "Mark of the Web" from all downloaded files prior to building in Visual 2019.  For more information on how to do this, see  [How To Tips - Remove the Mark of the Web Visual Studio 2019 - ericnagel.com](https://www.ericnagel.com/how-to-tips/remove-the-mark-of-the-web-visual-studio-2019.html) 
+
+Make sure the [Visual Studio NuGet Package manager](https://docs.microsoft.com/en-us/nuget/consume-packages/install-use-packages-visual-studio) has the [System.Data.SQLite.Core](https://www.nuget.org/packages/System.Data.SQLite.Core/) installed
 
