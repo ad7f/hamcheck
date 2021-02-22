@@ -180,7 +180,7 @@ namespace hamcheck
 
             string sqlStatement;
             sqlStatement = "SELECT A.call_sign,A.last_name,A.first_name,A.street_address,A.city,A.state from PUBACC_EN as A, TMP_PEOPLE as P WHERE A.last_name = P.last_name AND A.first_name LIKE (P.first_name || '%')";
-            if (cityList.Count>0) sqlStatement += " AND A.city IN (SELECT city FROM TMP_CITIES)";
+            if (cityList.Count>0) sqlStatement += " AND EXISTS (SELECT * FROM TMP_CITIES WHERE city=A.city AND (state IS NULL OR state=A.state))";
             
             sqlAdapter = new SQLiteDataAdapter(sqlStatement, dbConn);
             ds = new DataSet();
